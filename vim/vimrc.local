@@ -1,0 +1,223 @@
+" Modeline and Notes {
+" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={,} foldlevel=0 foldmethod=marker:
+" }
+
+" my custom filetype detection {
+    au BufRead,BufNewFile *.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
+    au BufRead,BufNewFile *.il		set filetype=skill
+    au BufRead,BufNewFile *.hvp		set filetype=hvp
+    au BufRead,BufNewFile *.cpf		set filetype=cpf
+    au BufRead,BufNewFile *.lib		set filetype=liberty
+" }
+
+" my custom filetype actions {
+    autocmd FileType verilog_systemverilog autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+    autocmd FileType hvp autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+" }
+
+" my custom plugin configs {
+
+" neocomplete {
+    if count(g:spf13_bundle_groups, 'neocomplete')
+        let g:neocomplcache_caching_limit_file_size = 900000
+        let g:neocomplcache_lock_iminsert = 1
+        let g:neocomplcache_auto_completion_start_length = 2
+        let g:neocomplcache_enable_underbar_completion = 0
+        let g:neocomplcache_skip_auto_completion_time = '1.0'
+        "if !exists('g:neocomplcache_sources_list')
+          "let g:neocomplcache_sources_list = {}
+        "endif
+        "let g:neocomplcache_sources_list.verilog_systemverilog = ['syntax_complete']
+
+        "let g:neocomplcache_disable_auto_complete = 1
+        "inoremap <expr><TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>"
+        "function! s:check_back_space()"{{{
+        "    let col = col('.') - 1
+        "    return !col || getline('.')[col - 1] =~ '\s'
+        "endfunction"}}}
+    endif
+" }
+
+" NERD_tree {
+    let NERDTreeQuitOnOpen=0
+" }
+
+
+" SnipMate {
+    " Setting the author var
+    " If forking, please overwrite in your .vimrc.local file
+    let g:snips_author = 'John Risley'
+" }
+
+" Numbers {
+	"Turn off contextual line numbers alltogether
+	let g:enable_numbers = 0
+" }
+
+" Airline {
+    let g:airline_theme = 'powerlineish'
+    let g:airline#extensions#branch#enabled = 0
+    let g:airline#extensions#tagbar#enabled = 1
+    let g:airline#extensions#hunks#enabled = 0
+    let g:airline#extensions#bufferline#enabled = 1
+    let g:airline#extensions#whitespace#mixed_indent_algo = 1
+    let g:airline#extensions#tabline#enabled = 1
+
+    "let g:airline_section_a       (mode, paste, iminsert)
+    "let g:airline_section_b       (hunks, branch)
+    "let g:airline_section_c       (bufferline or filename)
+    "let g:airline_section_gutter  (readonly, csv)
+    "let g:airline_section_x       (tagbar, filetype, virtualenv)
+    "let g:airline_section_y       (fileencoding, fileformat)
+    "let g:airline_section_y = '%{getcwd()}'
+    "let g:airline_section_z       (percentage, line number, column number)
+    "let g:airline_section_warning (syntastic, whitespace)
+" }
+
+" Bufferline {
+    let g:bufferline_show_bufnr = 0
+    let g:bufferline_active_buffer_left = '['
+    let g:bufferline_active_buffer_right = ']'
+    let g:bufferline_rotate = 1
+    "let g:bufferline_modified = ''
+" }
+
+" Bufferline {
+    
+" }
+
+" Tagbar {
+" }
+
+" Syntastic {
+    let g:enable_verilog_syntastic = 1
+    if exists("g:enable_verilog_syntastic")
+    "if exists("g:loaded_syntastic_plugin")
+        set statusline+=%#warningmsg#
+        set statusline+=%{SyntasticStatuslineFlag()}
+        set statusline+=%*
+        let g:syntastic_always_populate_loc_list = 1
+        let g:syntastic_auto_loc_list = 1
+        "let g:syntastic_check_on_open = 1
+        let g:syntastic_check_on_open = 0
+        let g:syntastic_check_on_wq = 0
+        "let g:syntastic_verilog_systemverilog_checkers=['vlogan', 'ncvlog', 'vlog']
+        "let g:syntastic_verilog_systemverilog_checkers=['vericom']
+        "let g:syntastic_verilog_systemverilog_checkers=['verilator']
+        "let g:syntastic_verilog_systemverilog_checkers=['vericom', 'verilator']
+        let g:syntastic_verilog_systemverilog_checkers=['']
+    "endif
+    endif
+" }
+
+" Rainbow Parens {
+    let g:rainbow_active = 1
+    let g:rainbow_conf = {
+    \   'guifgs': ['OrangeRed', 'SpringGreen', 'DeepSkyBlue', 'Violet'],
+    \}
+    "\   'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+    "\   'operators': '_,_',
+    "\   'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+" }
+
+" General {
+    " Initial Window Size
+    set lines=50 columns=150
+    "winpos 500 0
+    "winpos 2880 0
+    "winpos 3800 -500
+
+    " Minimum lines to keep above and below cursor
+    " 999 causes the cursor to remain centered
+    set scrolloff=999
+    " Hilight cursor column
+    "set cursorcolumn
+
+    " Line numbering
+    set nonu
+    set nornu
+
+    " Tabs
+    "set noexpandtab
+
+    " Spellchecking
+    set nospell
+
+    " Default folding behavior
+    "set nofoldenable
+    set foldlevelstart=0
+    set foldlevel=2
+    set foldcolumn=4
+
+    " Instead of failing a command because of unsaved changes, instead raise a
+    " dialogue asking if you wish to save changed files.
+    set confirm
+
+    " Diff options, ignore whitespace changes
+    set diffopt=filler,iwhite
+" }
+
+" { my custom mappings
+    " Map Y to act like D and C, i.e. to yank until EOL, 
+    " rather than act as yy, which is the default
+    map Y y$
+
+    " Map ctrl-c to toggle comments. This requires NERD commenter
+    map <C-c> <leader>c<space>
+
+    "" FOLDING
+    " Map ctrl-f to create fold, ctrl-d to delete fold, ctrl-space to toggle fold
+    "map <C-f> zf
+    "map <C-d> zd
+    "map <C-space> za
+
+    " This is totally awesome - remap jj to escape in insert mode.  
+    " You'll never type jj anyway, so it's great!
+    ino jj <Esc>
+    cno jj <C-c>
+    vno v <Esc>
+
+    " control backspace
+    :imap <C-BS> <C-W>
+
+    " control delete
+    :imap <C-Del> <C-O>dw
+
+    " create splits
+    "nnoremap <leader>v <C-w>v<C-w>l
+    "nnoremap <leader>s <C-w>s
+
+    " navigate buffers
+    nnoremap <leader>bn :bn<CR>
+    nnoremap <leader>bp :bp<CR>
+
+    " navigate help
+    nnoremap <buffer> <leader>h<CR> <C-]>
+    nnoremap <buffer> <leader>h<BS> <C-T>
+    nnoremap <buffer> <leader>ho /'\l\{2,\}'<CR>
+    nnoremap <buffer> <leader>hO ?'\l\{2,\}'<CR>
+    nnoremap <buffer> <leader>hs /\|\zs\S\+\ze\|<CR>
+    nnoremap <buffer> <leader>hS ?\|\zs\S\+\ze\|<CR>
+
+    " Tabularize {
+        "if isdirectory(expand("~/.vim/bundle/tabular"))
+            "nmap <Leader>a, :Tabularize /,<CR>
+            "vmap <Leader>a, :Tabularize /,<CR>
+        "endif
+    " }
+    "
+    " invoke the profiler
+    nnoremap <silent> <leader>DD :exe ":profile start profile.log"<cr>:exe ":profile func *"<cr>:exe ":profile file *"<cr>
+    nnoremap <silent> <leader>DP :exe ":profile pause"<cr>
+    nnoremap <silent> <leader>DC :exe ":profile continue"<cr>
+    nnoremap <silent> <leader>DQ :exe ":profile pause"<cr>:noautocmd qall!<cr>
+" }
+
+" { my custom UN-mappings
+    " Unbind the cursor keys in insert, normal and visual modes.
+    for prefix in ['i', 'n', 'v']
+      for key in ['<Up>', '<Down>', '<Left>', '<Right>']
+        exe prefix . "noremap " . key . " <Nop>"
+      endfor
+    endfor
+" }
