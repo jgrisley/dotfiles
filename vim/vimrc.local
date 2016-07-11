@@ -3,11 +3,12 @@
 " }
 
 " my custom filetype detection {
-    au BufRead,BufNewFile *.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
+    au BufRead,BufNewFile *.vlib,*.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
     au BufRead,BufNewFile *.il		set filetype=skill
     au BufRead,BufNewFile *.hvp		set filetype=hvp
     au BufRead,BufNewFile *.cpf		set filetype=cpf
     au BufRead,BufNewFile *.lib		set filetype=liberty
+    au BufRead,BufNewFile *.gradle	set filetype=groovy
 " }
 
 " my custom filetype actions {
@@ -82,8 +83,9 @@
     "let g:bufferline_modified = ''
 " }
 
-" Bufferline {
-    
+" verilog_systemverilog {
+    let g:verilog_disable_indent_lst = 0
+    let g:verilog_syntax_fold_lst = 1
 " }
 
 " Tagbar {
@@ -145,9 +147,9 @@
 
     " Default folding behavior
     "set nofoldenable
-    set foldlevelstart=0
-    set foldlevel=2
-    set foldcolumn=4
+    "set foldlevelstart=0
+    "set foldlevel=2
+    "set foldcolumn=4
 
     " Instead of failing a command because of unsaved changes, instead raise a
     " dialogue asking if you wish to save changed files.
