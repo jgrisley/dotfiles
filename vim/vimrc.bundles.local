@@ -11,3 +11,7 @@
     Bundle 'bufexplorer.zip'
 "}
 
+" verilog_systemverilog {
+    Plugin 'jgrisley/verilog_systemverilog.vim'
+"}
+
