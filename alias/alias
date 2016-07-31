@@ -1,0 +1,63 @@
+#-----------------------------------------------------------------------
+# alias system commands
+#-----------------------------------------------------------------------
+
+# cd
+alias c='cd'
+alias c-='cd -'
+alias u1='cd ../'
+alias u2='cd ../../'
+alias u3='cd ../../../'
+alias u4='cd ../../../../'
+alias u5='cd ../../../../../'
+alias u6='cd ../../../../../../'
+alias u7='cd ../../../../../../../'
+alias u8='cd ../../../../../../../../'
+#alias cd  =       'cd \!*    ; setprompt'
+#alias pushd =     'pushd \!* ; setprompt'
+#alias popd  =     'popd \!*  ; setprompt'
+
+# general
+alias cls=clear
+alias cmore='clear; more '
+alias cpr='cp -pr'
+alias d='date'
+alias g='grep'
+alias m='more'
+alias le='less'
+alias h=history
+alias hg='history|grep'
+alias mkd=mkdir
+alias rmr='rm -r'
+alias rmrf='rm -rf'
+alias t='tail'
+alias rm='rm -i'
+alias cp='cp -i'
+alias rl='rlogin'
+#alias bye	logout
+
+# gvim
+alias gv="gvim -u ${HOME}/.vimrc"
+alias gvi="gvim -u ${HOME}/.vimrc"
+alias givm="gvim -u ${HOME}/.vimrc"
+alias gvim="gvim -u ${HOME}/.vimrc"
+alias gvd='gvimdiff'
+alias gvn='gvim --noplugin'
+
+# ls
+alias lsd='ls -lFh | grep ^d'
+alias lsl='ls -lFh | grep ^l'
+alias ls='ls --color=auto'
+alias ll='ls -ltr --color=auto'
+alias lla='ls -ltra --color=auto'
+alias la='ls -a --color=auto'
+
+# perl
+alias formatperl='perltidy -i=2 -ci=2 -sil=1 -bt=2 -pt=2 -sbt=2 -bbt=2 -nsak="if elsif" -l=80  -nsbl -nsfs -nbbc -lp -vt=1 -vtc=0 -sbc -nolc -nwls="." -nwrs="." -nolq -mft=3'
+
+# tdkiff
+alias tkd='tkdiff'
+
+# xterm
+alias xtrm='xterm -bg black -bd green -fg green -fn Courier -title ~ &'
+
