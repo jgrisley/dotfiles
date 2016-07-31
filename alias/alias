@@ -44,14 +44,6 @@ alias gvim="gvim -u ${HOME}/.vimrc"
 alias gvd='gvimdiff'
 alias gvn='gvim --noplugin'
 
-# ls
-alias lsd='ls -lFh | grep ^d'
-alias lsl='ls -lFh | grep ^l'
-alias ls='ls --color=auto'
-alias ll='ls -ltr --color=auto'
-alias lla='ls -ltra --color=auto'
-alias la='ls -a --color=auto'
-
 # perl
 alias formatperl='perltidy -i=2 -ci=2 -sil=1 -bt=2 -pt=2 -sbt=2 -bbt=2 -nsak="if elsif" -l=80  -nsbl -nsfs -nbbc -lp -vt=1 -vtc=0 -sbc -nolc -nwls="." -nwrs="." -nolq -mft=3'
 
