@@ -15,6 +15,7 @@ endif
     au BufRead,BufNewFile *.cpf		set filetype=cpf
     au BufRead,BufNewFile *.lib		set filetype=liberty
     au BufRead,BufNewFile *.gradle	set filetype=groovy
+    au BufRead,BufNewFile *.spef	set filetype=spef
 " }
 
 " my custom filetype actions {
