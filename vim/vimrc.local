@@ -2,6 +2,12 @@
 " vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={,} foldlevel=0 foldmethod=marker:
 " }
 
+" my custom font settings {
+if OSX() && has("gui_running")
+    set guifont=Sauce\ Code\ Powerline:h14
+endif
+" }
+
 " my custom filetype detection {
     au BufRead,BufNewFile *.vlib,*.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
     au BufRead,BufNewFile *.il		set filetype=skill
