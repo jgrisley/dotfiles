@@ -15,3 +15,12 @@
     Plugin 'jgrisley/verilog_systemverilog.vim'
 "}
 
+    Plugin 'visual-increment'
+
+    "Plugin 'xolox/vim-misc'
+    "Plugin 'xolox/vim-easytags'
+    "Plugin 'easytags.vim'
+    "Plugin 'underlinetag'
+    Plugin 'SrcExpl'
+    Plugin 'Taglist.vim'
+    "Plugin 'Trinity'
