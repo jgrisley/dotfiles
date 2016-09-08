@@ -6,7 +6,13 @@
 if OSX() && has("gui_running")
     set guifont=Sauce\ Code\ Powerline:h14
 endif
-" }
+
+if LINUX() && has("gui_running")
+    set guifont=Source\ Code\ Pro\ Semibold\ Semi-Bold\ 12
+    set guicursor+=n-v-c:blinkon0
+endif
+" }  
+
 
 " my custom filetype detection {
     au BufRead,BufNewFile *.vlib,*.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
