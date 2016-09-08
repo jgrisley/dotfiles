@@ -24,7 +24,7 @@
     "Plugin 'xolox/vim-easytags'
     "Plugin 'easytags.vim'
     "Plugin 'underlinetag'
-    Plugin 'SrcExpl'
+    "Plugin 'SrcExpl'
     Plugin 'Taglist.vim'
     "Plugin 'Trinity'
 "}
