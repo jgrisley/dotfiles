@@ -52,7 +52,7 @@ let g:spf13_bundle_groups=['general', 'writing', 'neocomplcache', 'programming',
     " automatically complete, pressing <CR> inserts a newline, etc. Iff the
     " menu is open, tab will cycle through it. If a snippet is selected, <C-k>
     " expands it and jumps between fields.
-    "   let g:spf13_noninvasive_completion = 1
+       let g:spf13_noninvasive_completion = 1
 
     " Don't turn conceallevel or concealcursor
     "   let g:spf13_no_conceal = 1
@@ -66,10 +66,10 @@ let g:spf13_bundle_groups=['general', 'writing', 'neocomplcache', 'programming',
 
     " Leave the default font and size in GVim
     " To set your own font, do it from ~/.vimrc.local
-       let g:spf13_no_big_font = 1
+       "let g:spf13_no_big_font = 1
 
     " Disable  omni complete
-       let g:spf13_no_omni_complete = 1
+       "let g:spf13_no_omni_complete = 1
 
     " Don't create default mappings for multicursors
     " See :help multiple-cursors-mappings

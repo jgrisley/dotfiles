@@ -1,20 +1,19 @@
-" Modeline and Notes {
-" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={,} foldlevel=1 foldmethod=marker:
-" }
+" Modeline and Notes {{
+" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{,}} foldlevel=1 foldmethod=marker:
+" }}
 
-" my custom font settings {
+" my custom font settings {{
 if OSX() && has("gui_running")
     set guifont=Sauce\ Code\ Powerline:h14
 endif
 
 if LINUX() && has("gui_running")
     set guifont=Source\ Code\ Pro\ Semibold\ Semi-Bold\ 12
-    set guicursor+=n-v-c:blinkon0
+    "set guicursor+=n-v-c:blinkon0
 endif
-" }  
+" }}
 
-
-" my custom filetype detection {
+" my custom filetype detection {{
     au BufRead,BufNewFile *.vlib,*.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
     au BufRead,BufNewFile *.il		set filetype=skill
     au BufRead,BufNewFile *.hvp		set filetype=hvp
@@ -22,60 +21,285 @@ endif
     au BufRead,BufNewFile *.lib		set filetype=liberty
     au BufRead,BufNewFile *.gradle	set filetype=groovy
     au BufRead,BufNewFile *.spef	set filetype=spef
-" }
+" }}
 
-" my custom filetype actions {
+" my custom filetype actions {{
     autocmd FileType verilog_systemverilog autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+    autocmd FileType perl autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     autocmd FileType hvp autocmd BufWritePre <buffer> call StripTrailingWhitespace()
-" }
+" }}
 
-" my custom plugin configs {
+" my custom plugin configs {{
+" align {{
+    inoremap <silent> = =<Esc>:call <SID>ealign()<CR>a
+    function! s:ealign()
+        let p = '^.*=\s.*$'
+        if exists(':Tabularize') && getline('.') =~# '^.*=' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+            let column = strlen(substitute(getline('.')[0:col('.')],'[^=]','','g'))
+            let position = strlen(matchstr(getline('.')[0:col('.')],'.*=\s*\zs.*'))
+            Tabularize/=/l1
+            normal! 0
+            call search(repeat('[^=]*=',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+        endif
+    endfunction
+" }}
 
-" neocomplete {
-    if count(g:spf13_bundle_groups, 'neocomplete')
-        let g:neocomplcache_caching_limit_file_size = 900000
-        let g:neocomplcache_lock_iminsert = 1
+" neocomplete {{
+    if count(g:spf13_bundle_groups, 'neocomplcache')
+            hi clear Pmenu
+            hi clear PmenuSbar
+            hi clear PmenuThumb
+            hi Pmenu       guifg=black   guibg=gray40           ctermfg=black     ctermbg=Lightgray
+            hi PmenuSbar   guifg=grey    guibg=#F8F8F8 gui=NONE ctermfg=darkcyan  ctermbg=lightgray cterm=NONE
+            hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan  cterm=NONE
+
+
+            " Disable honza's snippets.
+            "let g:neosnippet#snippets_directory='~/.vim/bundle/neosnippet-snippets/neosnippets'
+
+            " Disable neosnippet snipmate compatibility mode
+            "let g:neosnippet#enable_snipmate_compatibility = 0
+
+        "" Disable AutoComplPop.
+        "let g:acp_enableAtStartup = 0
+        "" Use neocomplcache.
+        "let g:neocomplcache_enable_at_startup = 1
+        "" Use smartcase.
+        "let g:neocomplcache_enable_smart_case = 0
+        "" Use camel case completion.
+        "let g:neocomplcache_enable_camel_case_completion = 0
+        "" Use underbar completion.
+        "let g:neocomplcache_enable_underbar_completion = 0
+        "" Use fuzzy completion.
+        "let g:neocomplcache_enable_fuzzy_completion = 0
+
+        "" Set auto completion length.
         let g:neocomplcache_auto_completion_start_length = 2
-        let g:neocomplcache_enable_underbar_completion = 0
-        let g:neocomplcache_skip_auto_completion_time = '1.0'
-        "if !exists('g:neocomplcache_sources_list')
-          "let g:neocomplcache_sources_list = {}
+        "" Set manual completion length.
+        let g:neocomplcache_manual_completion_start_length = 0
+        "" Set minimum syntax keyword length.
+        let g:neocomplcache_min_syntax_length = 3
+        "" Set minimum keyword length.
+        let g:neocomplcache_min_keyword_length = 3
+        "" let g:neocomplcache_enable_cursor_hold_i = v:version > 703 ||
+        ""       \ v:version == 703 && has('patch289')
+        "let g:neocomplcache_enable_cursor_hold_i = 0
+        "let g:neocomplcache_cursor_hold_i_time = 300
+        let g:neocomplcache_enable_insert_char_pre = 1
+        "let g:neocomplcache_enable_prefetch = 1
+        let g:neocomplcache_skip_auto_completion_time = '0.6'
+
+        let g:neocomplcache_ctags_program          = '~/bin/uctags'
+        let g:neocomplcache_ctags_arguments_list   = '--recurse=yes --totals=yes --links=yes  --sort=no'
+        let g:neocomplcache_enable_caching_message = 1
+
+
+        "" For auto select.
+        "let g:neocomplcache_enable_auto_select = 1
+        "let g:neocomplcache_enable_auto_delimiter = 1
+        "let g:neocomplcache_enable_auto_close_preview = 1
+        let g:neocomplcache_disable_auto_select_buffer_name_pattern =
+              \ '\[Command Line\]'
+        ""let g:neocomplcache_disable_auto_complete = 0
+        "let g:neocomplcache_max_list = 100
+
+        let g:neocomplcache_force_overwrite_completefunc = 1
+        if !exists('g:neocomplcache_omni_patterns')
+          let g:neocomplcache_omni_patterns = {}
+        endif
+        if !exists('g:neocomplcache_omni_functions')
+          let g:neocomplcache_omni_functions = {}
+        endif
+        ""if !exists('g:neocomplcache_force_omni_patterns')
+          ""let g:neocomplcache_force_omni_patterns = {}
+        ""endif
+        "" let g:neocomplcache_force_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+        ""let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+
+        if !exists('g:neocomplcache_sources_list')
+            let g:neocomplcache_sources_list = {}
+        endif
+
+        if !exists('g:neocomplcache_delimiter_patterns')
+            let g:neocomplcache_delimiter_patterns= {}
+        endif
+        if !exists('g:neocomplcache_vim_completefuncs')
+            let g:neocomplcache_vim_completefuncs = {}
+        endif
+
+        "" For clang_complete.
+        ""let g:neocomplcache_force_overwrite_completefunc = 1
+        ""let g:neocomplcache_force_omni_patterns.c =
+              ""\ '[^.[:digit:] *\t]\%(\.\|->\)'
+        ""let g:neocomplcache_force_omni_patterns.cpp =
+              ""\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+        ""let g:clang_complete_auto = 0
+        ""let g:clang_auto_select = 0
+        ""let g:clang_use_library   = 1
+
+        "" Define keyword pattern.
+        if !exists('g:neocomplcache_keyword_patterns')
+          let g:neocomplcache_keyword_patterns = {}
+        endif
+        let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+        "let g:neocomplcache_keyword_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+        "let g:neocomplete#enable_multibyte_completion = 1
+
+        ""let g:neocomplcache_vim_completefuncs = {
+              ""\ 'Ref' : 'ref#complete',
+              ""\ 'Unite' : 'unite#complete_source',
+              ""\ 'VimShellExecute' :
+              ""\      'vimshell#vimshell_execute_complete',
+              ""\ 'VimShellInteractive' :
+              ""\      'vimshell#vimshell_execute_complete',
+              ""\ 'VimShellTerminal' :
+              ""\      'vimshell#vimshell_execute_complete',
+              ""\ 'VimShell' : 'vimshell#complete',
+              ""\ 'VimFiler' : 'vimfiler#complete',
+              ""\ 'Vinarise' : 'vinarise#complete',
+              ""\}
+
+        "let g:neocomplcache_caching_limit_file_size = 900000
+        "let g:neocomplcache_lock_iminsert = 1
+
+        "let g:neocomplcache_delimiter_patterns.vim = ['#']
+
+        " verilog_systemverilog completion
+        "let g:neocomplcache_delimiter_patterns.verilog_systemverilog = ['::']
+        let g:neocomplcache_omni_patterns.verilog_systemverilog = '[^.[:digit:] *\t]\%(\.\|->\)'
+        let g:neocomplcache_omni_functions.verilog_systemverilog = 'verilog_systemverilog#Complete'
+        "let g:neocomplcache_vim_completefuncs.verilog_systemverilog = 'verilog_systemverilog#Complete'
+
+        "let g:neocomplcache_sources_list._ = ['buffer_complete']
+        let g:neocomplcache_sources_list.verilog_systemverilog =
+            \ ['buffer_complete', 'omni_complete', 'snippets_complete', 'syntax_complete']
+
+        "if !exists('g:neocomplcache_same_filetype_lists')
+            "let g:neocomplcache_same_filetype_lists = {}
         "endif
-        "let g:neocomplcache_sources_list.verilog_systemverilog = ['syntax_complete']
+        "let g:neocomplcache_same_filetype_lists.verilog_systemverilog = 'cpp,d'
+        ""let g:neocomplcache_sources_list.verilog_systemverilog = ['syntax_complete']
 
+        " Plugin key-mappings.
+        "inoremap <expr><C-g>     neocomplcache#undo_completion()
+        "inoremap <expr><C-l>     neocomplcache#complete_common_string()
+
+        " Recommended key-mappings.
+        " <CR>: close popup and save indent.
+        "inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+        "function! s:my_cr_function()
+          "return neocomplcache#smart_close_popup() . "\<CR>"
+          " For no inserting <CR> key.
+          "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+        "endfunction
+        " <TAB>: completion.
+        "inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+        " <C-h>, <BS>: close popup and delete backword char.
+        "inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+        "inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+        "inoremap <expr><C-y>  neocomplcache#close_popup()
+        "inoremap <expr><C-e>  neocomplcache#cancel_popup()
+        " Close popup by <Space>.
+        "inoremap <expr><Space> pumvisible() ? neocomplcache#close_popup() : "\<Space>"
+
+        " For cursor moving in insert mode(Not recommended)
+        "inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
+        "inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
+        "inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
+        "inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
+        " Or set this.
+        "let g:neocomplcache_enable_cursor_hold_i = 1
+        " Or set this.
+        "let g:neocomplcache_enable_insert_char_pre = 1
+
+        " AutoComplPop like behavior.
+        "let g:neocomplcache_enable_auto_select = 1
+
+        " Shell like behavior(not recommended).
+        "set completeopt+=longest
+        "let g:neocomplcache_enable_auto_select = 1
         "let g:neocomplcache_disable_auto_complete = 1
-        "inoremap <expr><TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>"
-        "function! s:check_back_space()"{{{
-        "    let col = col('.') - 1
-        "    return !col || getline('.')[col - 1] =~ '\s'
-        "endfunction"}}}
+        "inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
     endif
-" }
+" }}
 
-" NERD_tree {
+" NERD_tree {{
     let NERDTreeQuitOnOpen=0
-" }
+" }}
 
-
-" SnipMate {
+" neosnippet - SnipMate {{
     " Setting the author var
     " If forking, please overwrite in your .vimrc.local file
     let g:snips_author = 'John Risley'
-" }
+    vmap <leader>et <Plug>(neosnippet_expand_target)
+" }}
 
-" Numbers {
-	"Turn off contextual line numbers alltogether
-	let g:enable_numbers = 0
-" }
+" Numbers {{
+    "Turn off contextual line numbers alltogether
+    let g:enable_numbers = 0
+" }}
 
-" Airline {
+" Airline {{
     let g:airline_theme = 'powerlineish'
-    let g:airline#extensions#branch#enabled = 0
-    let g:airline#extensions#tagbar#enabled = 1
-    let g:airline#extensions#hunks#enabled = 0
+    "let g:airline_solarized_dark_inactive_border = 1
+    let g:airline_inactive_collapse=1
+    let g:airline_detect_modified=1
+    let g:airline_detect_paste=1
+
+    " symbols        › ‹
+    let g:airline_left_sep=''
+    let g:airline_right_sep=''
+
+
+    ""enable/disable fugitive/lawrencium integration >
+    let g:airline#extensions#branch#enabled = 1
+
+    ""change the text for when no branch is detected >
+    let g:airline#extensions#branch#empty_message = ''
+
+    ""define the order in which the branches of different vcs systems will be
+    ""displayed on the statusline (currently only for fugitive and lawrencium) >
+    let g:airline#extensions#branch#vcs_priority = ["git", "mercurial"]
+
+    ""use vcscommand.vim if available >
+    let g:airline#extensions#branch#use_vcscommand = 0
+
+    ""truncate long branch names to a fixed length >
+    let g:airline#extensions#branch#displayed_head_limit = 10
+
+    ""customize formatting of branch name >
+    " default value leaves the name unmodifed
+    "let g:airline#extensions#branch#format = 0
+    " to only show the tail, e.g. a branch 'feature/foo' becomes 'foo', use
+    let g:airline#extensions#branch#format = 1
+    " to truncate all path sections but the last one, e.g. a branch
+    " 'foo/bar/baz' becomes 'f/b/baz', use
+    "let g:airline#extensions#branch#format = 2
+
+    " if a string is provided, it should be the name of a function that
+    " takes a string and returns the desired value
+    "let g:airline#extensions#branch#format = 'CustomBranchName'
+    "function! CustomBranchName(name)
+        "return '[' . a:name . ']'
+    "endfunction
+
+    let g:airline#extensions#hunks#enabled = 1
+
     let g:airline#extensions#bufferline#enabled = 1
-    let g:airline#extensions#whitespace#mixed_indent_algo = 1
+    "let g:airline#extensions#bufferline#enabled = 0
+    "let g:airline#extensions#bufferline#overwrite_variables = 0
+    " link expected highlight for inactive bufferline
+    " to actual highlight for inactive bufferline
+    highlight link airline_c_inactive airline_c1_inactive
+
     let g:airline#extensions#tabline#enabled = 1
+    let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+    let g:airline#extensions#tabline#tab_nr_type = 2 " splits and tab number
+    let g:airline#extensions#tabline#show_splits = 0
+
+    let g:airline#extensions#tagbar#enabled = 1
+
+    let g:airline#extensions#whitespace#mixed_indent_algo = 1
 
     "let g:airline_section_a       (mode, paste, iminsert)
     "let g:airline_section_b       (hunks, branch)
@@ -86,17 +310,17 @@ endif
     "let g:airline_section_y = '%{getcwd()}'
     "let g:airline_section_z       (percentage, line number, column number)
     "let g:airline_section_warning (syntastic, whitespace)
-" }
+" }}
 
-" Bufferline {
+" Bufferline {{
     let g:bufferline_show_bufnr = 0
-    let g:bufferline_active_buffer_left = '['
-    let g:bufferline_active_buffer_right = ']'
     let g:bufferline_rotate = 1
+    let g:bufferline_fixed_index = 0
+    let g:bufferline_fname_mod = ':t:s?^$?[No Name]?'
     "let g:bufferline_modified = ''
-" }
+" }}
 
-" EasyTags {
+" EasyTags {{
     "autocmd FileType * set tags=./.tags;,~/.vim/.vimtags
     "set cpoptions+=d  " i had to add this, it wasn't on until now.
     "let g:easytags_autorecurse = 1
@@ -111,43 +335,31 @@ endif
     "let g:easytags_resolve_links = 1
     "let g:easytags_resolve_links = 1
     "let g:easytags_suppress_report = 1
-" }
+" }}
 
-" verilog_systemverilog {
-    let g:verilog_disable_indent_lst = 0
-    let g:verilog_syntax_fold_lst = 1
-" }
+" verilog_systemverilog {{
+    "let g:verilog_disable_indent_lst = 0
+    let g:verilog_syntax_fold_lst = "all"
+    nnoremap <leader>i :VerilogFollowInstance<CR>
+    nnoremap <leader>I :VerilogFollowPort<CR>
+    nnoremap <leader>s :VerilogGotoInstanceStart<CR>
+" }}
 
-" SrcExpl {
+" Taglist {{
+    let Tlist_Ctags_Cmd = "~/bin/uctags --recurse=yes --totals=yes --links=yes  --sort=no "
+    let Tlist_GainFocus_On_ToggleOpen = 1
+    let Tlist_Use_Right_Window = 1
+" }}
 
-    let g:SrcExpl_winHeight = 8
-    let g:SrcExpl_refreshTime = 50
-    let g:SrcExpl_searchLocalDef = 0
-    "let g:SrcExpl_pluginList
-    let g:SrcExpl_updateTagsCmd = "uctags --recurse=yes --totals=yes --links=yes  --sort=foldcase -R ."
-    "
-    nmap <F8> :SrcExplToggle<CR>
-    " // Set "Enter" key to jump into the exact definition context 
-    "let g:SrcExpl_jumpKey = "<ENTER>" 
-    " // Set "Space" key for back from the definition context 
-    "let g:SrcExpl_gobackKey = "<SPACE>"
-    nmap <C-I> <C-W>j:call g:SrcExpl_Jump()<CR> 
-    nmap <C-O> :call g:SrcExpl_GoBack()<CR>
-" }
+" Tagbar {{
+    let g:tagbar_ctags_bin = '~/bin/uctags'
+    let g:tagbar_autofocus = 1
+    let g:tagbar_sort = 0
+    let g:tagbar_compact = 1
+" }}
 
-" Taglist {
-	let Tlist_Ctags_Cmd = "~/bin/uctags --recurse=yes --totals=yes --links=yes  --sort=foldcase "
-	let Tlist_GainFocus_On_ToggleOpen = 1
-	let Tlist_Use_Right_Window = 1
-    
-" }
-
-" Tagbar {
-    "let g:tagbar_ctags_bin = '~/bin/uctags'
-" }
-
-" Syntastic {
-    let g:enable_verilog_syntastic = 1
+" Syntastic {{
+    "let g:enable_verilog_syntastic = 1
     if exists("g:enable_verilog_syntastic")
     "if exists("g:loaded_syntastic_plugin")
         set statusline+=%#warningmsg#
@@ -167,9 +379,9 @@ endif
     endif
     let g:syntastic_disabled_filetypes=['fortran']
     let g:syntastic_disabled_filetypes=['gofortran']
-" }
+" }}
 
-" Rainbow Parens {
+" Rainbow Parens {{
     let g:rainbow_active = 1
     let g:rainbow_conf = {
     \   'guifgs': ['OrangeRed', 'SpringGreen', 'DeepSkyBlue', 'Violet'],
@@ -177,20 +389,40 @@ endif
     "\   'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
     "\   'operators': '_,_',
     "\   'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
-" }
+" }}
+" }}
 
-" General {
+    let g:signify_line_highlight = 0
+    let g:signify_sign_change    = '~'
+
+" General {{
     " Initial Window Size
     set lines=50 columns=150
     "winpos 500 0
     "winpos 2880 0
     "winpos 3800 -500
 
+    if has('statusline')
+        set laststatus=2
+
+        " Broken down into easily includeable segments
+        set statusline=%<%f\                     " Filename
+        set statusline+=%w%h%m%r                 " Options
+        set statusline+=%{fugitive#statusline()} " Git Hotness
+        set statusline+=\ [%{&ff}/%Y]            " Filetype
+        set statusline+=\ [%{getcwd()}]          " Current dir
+        set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
+    endif
+
     " Minimum lines to keep above and below cursor
     " 999 causes the cursor to remain centered
     set scrolloff=999
+
     " Hilight cursor column
     "set cursorcolumn
+    
+    " Highlight cursor
+    "hi link Cursor airline_a
 
     " Line numbering
     set nonu
@@ -203,10 +435,11 @@ endif
     set nospell
 
     " Default folding behavior
-    "set nofoldenable
-    "set foldlevelstart=0
-    "set foldlevel=2
-    "set foldcolumn=4
+    set foldenable
+    set foldmethod=syntax
+    set foldlevelstart=2
+    set foldlevel=2
+    set foldcolumn=4
 
     " Instead of failing a command because of unsaved changes, instead raise a
     " dialogue asking if you wish to save changed files.
@@ -214,10 +447,26 @@ endif
 
     " Diff options, ignore whitespace changes
     set diffopt=filler,iwhite
-" }
 
-" { my custom mappings
-    " Map Y to act like D and C, i.e. to yank until EOL, 
+    " Virtual edit: allow cusor to move where there is no symbols
+    set virtualedit=block
+
+    " Update diff.
+    augroup MyAutoCmd
+        autocmd InsertLeave * if &l:diff | diffupdate | endif
+    augroup END
+
+    "set completeopt=menuone,longest
+" }}
+
+" my custom mappings {{
+    " Indent
+    nnoremap > >>
+    nnoremap < <<
+    xnoremap > >gv
+    xnoremap < <gv
+
+    " Map Y to act like D and C, i.e. to yank until EOL,
     " rather than act as yy, which is the default
     map Y y$
 
@@ -230,7 +479,7 @@ endif
     "map <C-d> zd
     "map <C-space> za
 
-    " This is totally awesome - remap jj to escape in insert mode.  
+    " This is totally awesome - remap jj to escape in insert mode.
     " You'll never type jj anyway, so it's great!
     ino jj <Esc>
     cno jj <C-c>
@@ -260,25 +509,25 @@ endif
 
     nnoremap <leader>tl :TlistToggle<CR>
     "
-    " Tabularize {
+    " Tabularize {{
         "if isdirectory(expand("~/.vim/bundle/tabular"))
             "nmap <Leader>a, :Tabularize /,<CR>
             "vmap <Leader>a, :Tabularize /,<CR>
         "endif
-    " }
+    " }}
     "
     " invoke the profiler
     nnoremap <silent> <leader>DD :exe ":profile start profile.log"<cr>:exe ":profile func *"<cr>:exe ":profile file *"<cr>
     nnoremap <silent> <leader>DP :exe ":profile pause"<cr>
     nnoremap <silent> <leader>DC :exe ":profile continue"<cr>
     nnoremap <silent> <leader>DQ :exe ":profile pause"<cr>:noautocmd qall!<cr>
-" }
+" }}
 
-" { my custom UN-mappings
+" my custom UN-mappings {{
     " Unbind the cursor keys in insert, normal and visual modes.
     for prefix in ['i', 'n', 'v']
       for key in ['<Up>', '<Down>', '<Left>', '<Right>']
         exe prefix . "noremap " . key . " <Nop>"
       endfor
     endfor
-" }
+" }}
