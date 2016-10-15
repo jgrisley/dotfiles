@@ -8,12 +8,75 @@ if OSX() && has("gui_running")
 endif
 
 if LINUX() && has("gui_running")
-    set guifont=Source\ Code\ Pro\ Semibold\ Semi-Bold\ 12
+    set guifont=Sauce\ Code\ Powerline\ 13
     "set guicursor+=n-v-c:blinkon0
 endif
 " }}
 
-" my custom filetype detection {{
+" General {{
+    " Initial Window Size
+    set lines=50 columns=150
+    "winpos 500 0
+    "winpos 2880 0
+    "winpos 3800 -500
+
+    if has('statusline')
+        set laststatus=2
+
+        " Broken down into easily includeable segments
+        set statusline=%<%f\                     " Filename
+        set statusline+=%w%h%m%r                 " Options
+        set statusline+=%{fugitive#statusline()} " Git Hotness
+        set statusline+=\ [%{&ff}/%Y]            " Filetype
+        set statusline+=\ [%{getcwd()}]          " Current dir
+        set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
+    endif
+
+    " Minimum lines to keep above and below cursor
+    " 999 causes the cursor to remain centered
+    set scrolloff=999
+
+    " Hilight cursor column
+    "set cursorcolumn
+
+    " Highlight cursor
+    "hi link Cursor airline_a
+
+    " Line numbering
+    set nonu
+    set nornu
+
+    " Tabs
+    "set noexpandtab
+
+    " Spellchecking
+    set nospell
+
+    " Default folding behavior
+    set foldenable
+    set foldmethod=syntax
+    set foldlevelstart=2
+    set foldlevel=2
+    set foldcolumn=4
+
+    " Instead of failing a command because of unsaved changes, instead raise a
+    " dialogue asking if you wish to save changed files.
+    set confirm
+
+    " Diff options, ignore whitespace changes
+    set diffopt=filler,iwhite
+
+    " Virtual edit: allow cusor to move where there is no symbols
+    set virtualedit=block
+
+    augroup MyAutoCmd
+        " Update diff.
+        autocmd InsertLeave * if &l:diff | diffupdate | endif
+    augroup END
+    "set completeopt=menuone,longest
+" }}
+
+" Filetype actions and detection {{
     au BufRead,BufNewFile *.vlib,*.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
     au BufRead,BufNewFile *.il		set filetype=skill
     au BufRead,BufNewFile *.hvp		set filetype=hvp
@@ -21,15 +84,14 @@ endif
     au BufRead,BufNewFile *.lib		set filetype=liberty
     au BufRead,BufNewFile *.gradle	set filetype=groovy
     au BufRead,BufNewFile *.spef	set filetype=spef
-" }}
 
-" my custom filetype actions {{
     autocmd FileType verilog_systemverilog autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     autocmd FileType perl autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     autocmd FileType hvp autocmd BufWritePre <buffer> call StripTrailingWhitespace()
 " }}
 
-" my custom plugin configs {{
+" Plugin Configs {{
+
 " align {{
     inoremap <silent> = =<Esc>:call <SID>ealign()<CR>a
     function! s:ealign()
@@ -46,12 +108,6 @@ endif
 
 " neocomplete {{
     if count(g:spf13_bundle_groups, 'neocomplcache')
-            hi clear Pmenu
-            hi clear PmenuSbar
-            hi clear PmenuThumb
-            hi Pmenu       guifg=black   guibg=gray40           ctermfg=black     ctermbg=Lightgray
-            hi PmenuSbar   guifg=grey    guibg=#F8F8F8 gui=NONE ctermfg=darkcyan  ctermbg=lightgray cterm=NONE
-            hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan  cterm=NONE
 
 
             " Disable honza's snippets.
@@ -87,7 +143,8 @@ endif
         "let g:neocomplcache_cursor_hold_i_time = 300
         let g:neocomplcache_enable_insert_char_pre = 1
         "let g:neocomplcache_enable_prefetch = 1
-        let g:neocomplcache_skip_auto_completion_time = '0.6'
+        "let g:neocomplcache_skip_auto_completion_time = '0.6'
+        let g:neocomplcache_skip_auto_completion_time = ''
 
         let g:neocomplcache_ctags_program          = '~/bin/uctags'
         let g:neocomplcache_ctags_arguments_list   = '--recurse=yes --totals=yes --links=yes  --sort=no'
@@ -166,14 +223,20 @@ endif
 
         " verilog_systemverilog completion
         "let g:neocomplcache_delimiter_patterns.verilog_systemverilog = ['::']
-        let g:neocomplcache_omni_patterns.verilog_systemverilog = '[^.[:digit:] *\t]\%(\.\|->\)'
-        let g:neocomplcache_omni_functions.verilog_systemverilog = 'verilog_systemverilog#Complete'
+        "let g:neocomplcache_omni_patterns.verilog_systemverilog = '[^.[:digit:] *\t]\%(\.\|->\)'
+        "let g:neocomplcache_omni_functions.verilog_systemverilog = 'verilog_systemverilog#Complete'
         "let g:neocomplcache_vim_completefuncs.verilog_systemverilog = 'verilog_systemverilog#Complete'
+
+        if !exists('g:neocomplcache_dictionary_filetype_lists')
+          let g:neocomplcache_dictionary_filetype_lists = {}
+        endif
+        let g:neocomplcache_dictionary_filetype_lists.verilog_systemverilog = '~/neodicts/verilog_systemverilog'
 
         "let g:neocomplcache_sources_list._ = ['buffer_complete']
         let g:neocomplcache_sources_list.verilog_systemverilog =
-            \ ['buffer_complete', 'omni_complete', 'snippets_complete', 'syntax_complete']
+            \ ['buffer_complete', 'dictionary_complete', 'snippets_complete', 'syntax_complete', 'tags_complete']
 
+        call neocomplcache#initialize()
         "if !exists('g:neocomplcache_same_filetype_lists')
             "let g:neocomplcache_same_filetype_lists = {}
         "endif
@@ -239,6 +302,15 @@ endif
     let g:enable_numbers = 0
 " }}
 
+" AutoPairs {{
+    autocmd Filetype verilog_systemverilog let b:AutoPairs = {
+                \ '(': ')' ,
+                \ '[': ']' ,
+                \ '{': '}' ,
+                \ '"': '"'
+                \ }
+" }}
+
 " Airline {{
     let g:airline_theme = 'powerlineish'
     "let g:airline_solarized_dark_inactive_border = 1
@@ -250,23 +322,17 @@ endif
     let g:airline_left_sep=''
     let g:airline_right_sep=''
 
-
     ""enable/disable fugitive/lawrencium integration >
     let g:airline#extensions#branch#enabled = 1
-
     ""change the text for when no branch is detected >
     let g:airline#extensions#branch#empty_message = ''
-
     ""define the order in which the branches of different vcs systems will be
     ""displayed on the statusline (currently only for fugitive and lawrencium) >
     let g:airline#extensions#branch#vcs_priority = ["git", "mercurial"]
-
     ""use vcscommand.vim if available >
     let g:airline#extensions#branch#use_vcscommand = 0
-
     ""truncate long branch names to a fixed length >
     let g:airline#extensions#branch#displayed_head_limit = 10
-
     ""customize formatting of branch name >
     " default value leaves the name unmodifed
     "let g:airline#extensions#branch#format = 0
@@ -275,7 +341,6 @@ endif
     " to truncate all path sections but the last one, e.g. a branch
     " 'foo/bar/baz' becomes 'f/b/baz', use
     "let g:airline#extensions#branch#format = 2
-
     " if a string is provided, it should be the name of a function that
     " takes a string and returns the desired value
     "let g:airline#extensions#branch#format = 'CustomBranchName'
@@ -292,10 +357,30 @@ endif
     " to actual highlight for inactive bufferline
     highlight link airline_c_inactive airline_c1_inactive
 
+
     let g:airline#extensions#tabline#enabled = 1
     let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-    let g:airline#extensions#tabline#tab_nr_type = 2 " splits and tab number
+    let g:airline#extensions#tabline#fnamecollapse = 1
+    let g:airline#extensions#tabline#fnamemod = ':p:.'
+      "let g:airline#extensions#tabline#fnametruncate = 0
+    let g:airline#extensions#tabline#show_tab_nr = 0
+    let g:airline#extensions#tabline#show_tab_type = 1
+    let g:airline#extensions#tabline#tab_nr_type = 0 " splits
+    "let g:airline#extensions#tabline#tab_nr_type = 2 " splits and tab number
     let g:airline#extensions#tabline#show_splits = 0
+    let g:airline#extensions#tabline#show_buffers = 0
+    "let g:airline#extensions#tabline#left_sep = ''
+    "let g:airline#extensions#tabline#left_alt_sep = ''
+    "let g:airline#extensions#tabline#right_sep = ''
+    "let g:airline#extensions#tabline#right_alt_sep = ''
+    "* configure pattern to be ignored on BufAdd autocommand >
+    " fixes unneccessary redraw, when e.g. opening Gundo window
+    let airline#extensions#tabline#ignore_bufadd_pat =
+            \ '\c\vgundo|undotree|vimfiler|tagbar|nerd_tree'
+    "* enable Refresh of tabline buffers on |BufAdd| autocommands
+    "(set this to one, if you note 'AirlineTablineRefresh', however, this
+    "won't update airline on |:badd| commands) >
+    let airline#extensions#tabline#disable_refresh = 0
 
     let g:airline#extensions#tagbar#enabled = 1
 
@@ -320,6 +405,35 @@ endif
     "let g:bufferline_modified = ''
 " }}
 
+" ctrlspace {{
+    if isdirectory(expand("~/.vim/bundle/vim-ctrlspace/"))
+        " Airline dependecies
+        let g:airline_exclude_preview = 1
+        let g:airline#extensions#ctrlspace#enabled = 1
+
+        "let g:CtrlSpaceStatuslineFunction = "airline#extensions#ctrlspace#statusline()"
+        let g:CtrlSpaceHeight             = 4
+        let g:CtrlSpaceCacheDir           = $HOME.'/.cache/'
+        let g:CtrlSpaceFileEngine         = "auto"
+
+        if executable("ag")
+            let g:CtrlSpaceGlobCommand = 'ag -l --nocolor -g ""'
+        endif
+        "let g:CtrlSpaceUseTabline = 0
+    endif
+" }}
+
+" CtrlP {{
+    if isdirectory(expand("~/.vim/bundle/ctrlp.vim/"))
+        let g:ctrlp_show_hidden = 1
+
+        let g:ctrlp_prompt_mappings = {
+            \ 'ToggleType(1)':        ['<c-f>', '<c-up>', '<c-space>'],
+            \ 'ToggleType(-1)':       ['<c-b>', '<c-down>'],
+            \ }
+    endif
+" }}
+
 " EasyTags {{
     "autocmd FileType * set tags=./.tags;,~/.vim/.vimtags
     "set cpoptions+=d  " i had to add this, it wasn't on until now.
@@ -337,6 +451,16 @@ endif
     "let g:easytags_suppress_report = 1
 " }}
 
+" tpope/vim-endwise {{
+    augroup endwise
+        autocmd FileType verilog_systemverilog
+            \ let b:endwise_addition = 'end' |
+            \ let b:endwise_words = 'begin' |
+            \ let b:endwise_pattern = '^\s*#\%(begin)\>' |
+            \ let b:endwise_syngroups = 'verilogStatement'
+     augroup END
+" }}
+
 " verilog_systemverilog {{
     "let g:verilog_disable_indent_lst = 0
     let g:verilog_syntax_fold_lst = "all"
@@ -346,9 +470,12 @@ endif
 " }}
 
 " Taglist {{
-    let Tlist_Ctags_Cmd = "~/bin/uctags --recurse=yes --totals=yes --links=yes  --sort=no "
-    let Tlist_GainFocus_On_ToggleOpen = 1
-    let Tlist_Use_Right_Window = 1
+    if isdirectory(expand("~/.vim/bundle/Taglist.vim/"))
+        let Tlist_Ctags_Cmd = "~/bin/uctags --recurse=yes --totals=yes --links=yes  --sort=no "
+        let Tlist_GainFocus_On_ToggleOpen = 1
+        let Tlist_Use_Right_Window = 1
+        nnoremap <leader>tl :TlistToggle<CR>
+    endif
 " }}
 
 " Tagbar {{
@@ -389,74 +516,14 @@ endif
     "\   'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
     "\   'operators': '_,_',
     "\   'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
-" }}
+" }
 " }}
 
+" Signify {{
     let g:signify_line_highlight = 0
     let g:signify_sign_change    = '~'
+" }}
 
-" General {{
-    " Initial Window Size
-    set lines=50 columns=150
-    "winpos 500 0
-    "winpos 2880 0
-    "winpos 3800 -500
-
-    if has('statusline')
-        set laststatus=2
-
-        " Broken down into easily includeable segments
-        set statusline=%<%f\                     " Filename
-        set statusline+=%w%h%m%r                 " Options
-        set statusline+=%{fugitive#statusline()} " Git Hotness
-        set statusline+=\ [%{&ff}/%Y]            " Filetype
-        set statusline+=\ [%{getcwd()}]          " Current dir
-        set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
-    endif
-
-    " Minimum lines to keep above and below cursor
-    " 999 causes the cursor to remain centered
-    set scrolloff=999
-
-    " Hilight cursor column
-    "set cursorcolumn
-    
-    " Highlight cursor
-    "hi link Cursor airline_a
-
-    " Line numbering
-    set nonu
-    set nornu
-
-    " Tabs
-    "set noexpandtab
-
-    " Spellchecking
-    set nospell
-
-    " Default folding behavior
-    set foldenable
-    set foldmethod=syntax
-    set foldlevelstart=2
-    set foldlevel=2
-    set foldcolumn=4
-
-    " Instead of failing a command because of unsaved changes, instead raise a
-    " dialogue asking if you wish to save changed files.
-    set confirm
-
-    " Diff options, ignore whitespace changes
-    set diffopt=filler,iwhite
-
-    " Virtual edit: allow cusor to move where there is no symbols
-    set virtualedit=block
-
-    " Update diff.
-    augroup MyAutoCmd
-        autocmd InsertLeave * if &l:diff | diffupdate | endif
-    augroup END
-
-    "set completeopt=menuone,longest
 " }}
 
 " my custom mappings {{
@@ -498,6 +565,7 @@ endif
     " navigate buffers
     nnoremap <leader>bn :bn<CR>
     nnoremap <leader>bp :bp<CR>
+    nnoremap <S-Space> :bn<CR>
 
     " navigate help
     nnoremap <buffer> <leader>h<CR> <C-]>
@@ -507,7 +575,6 @@ endif
     nnoremap <buffer> <leader>hs /\|\zs\S\+\ze\|<CR>
     nnoremap <buffer> <leader>hS ?\|\zs\S\+\ze\|<CR>
 
-    nnoremap <leader>tl :TlistToggle<CR>
     "
     " Tabularize {{
         "if isdirectory(expand("~/.vim/bundle/tabular"))
@@ -530,4 +597,54 @@ endif
         exe prefix . "noremap " . key . " <Nop>"
       endfor
     endfor
+" }}
+
+" Custom foldtext {{
+    fu! CustomFoldText()
+        "get first non-blank line
+        let fs = v:foldstart
+        while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
+        endwhile
+        if fs > v:foldend
+            let line = getline(v:foldstart)
+        else
+            let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
+        endif
+
+        let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
+        let foldSize = 1 + v:foldend - v:foldstart
+        let foldSizeStr = " " . foldSize . " lines "
+        let foldLevelStr = repeat("+--", v:foldlevel)
+        let lineCount = line("$")
+        let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%] "
+        let expansionString = repeat(".", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
+        return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
+    endf
+    set foldtext=CustomFoldText()
+" }}
+
+" Solarized color customization {{
+    if g:colors_name == 'solarized'
+        hi clear FoldColumn
+        hi clear Folded
+        hi clear Pmenu
+        hi clear PmenuSel
+        "hi clear PmenuSbar
+        "hi clear PmenuThumb
+
+        hi FoldColumn  gui=NONE guifg=#839496 guibg=#073642 guisp=#002b36                           ctermfg=6 ctermbg=0
+        hi Folded      gui=NONE guifg=#839496 guibg=#013E4D guisp=#002b36 term=underline cterm=bold ctermfg=6 ctermbg=0
+        hi Pmenu       gui=NONE guifg=#AAAAAA guibg=#333333                                         ctermfg=lightgray ctermbg=gray
+        hi PmenuSel    gui=NONE guifg=#FFFFFF guibg=#002B36                                         ctermfg=white     ctermbg=black
+        "hi PmenuSbar  gui=NONE guifg=grey    guibg=#F8F8F8                                         ctermfg=darkcyan  ctermbg=lightgray cterm=NONE
+        "hi PmenuThumb gui=NONE guifg=#F8F8F8 guibg=#8A95A7                                         ctermfg=lightgray ctermbg=darkcyan  cterm=NONE
+
+        "TODO check if ctrlspace installed
+        if isdirectory(expand("~/.vim/bundle/vim-ctrlspace/"))
+            hi link CtrlSpaceNormal   Normal
+            hi link CtrlSpaceSelected Cursor
+            hi link CtrlSpaceSearch   Search
+            hi link CtrlSpaceStatus   StatusLine
+        endif
+    endif
 " }}
