@@ -25,6 +25,8 @@
     "Plugin 'easytags.vim'
     "Plugin 'underlinetag'
     "Plugin 'SrcExpl'
-    Plugin 'Taglist.vim'
     "Plugin 'Trinity'
+    "Plugin 'gcmt/taboo.vim'
+    "Plugin 'Taglist.vim'
+    "Plugin 'vim-ctrlspace/vim-ctrlspace'
 "}
