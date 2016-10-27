@@ -524,8 +524,6 @@ endif
     let g:signify_sign_change    = '~'
 " }}
 
-" }}
-
 " my custom mappings {{
     " Indent
     nnoremap > >>
