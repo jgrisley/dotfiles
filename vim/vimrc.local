@@ -1,5 +1,5 @@
 " Modeline and Notes {{
-" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{,}} foldlevel=1 foldmethod=marker:
+" vim: set sw=4 ts=4 sts=4 et tw=120 foldmarker={{,}} foldlevel=1 foldmethod=marker:
 " }}
 
 " my custom font settings {{
@@ -15,7 +15,8 @@ endif
 
 " General {{
     " Initial Window Size
-    set lines=50 columns=150
+    set lines=999
+    set columns=150
     "winpos 500 0
     "winpos 2880 0
     "winpos 3800 -500
@@ -32,15 +33,29 @@ endif
         set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
     endif
 
+    " ⌬ ⊡  ⊗ ⇝ 〉 › ⁞␠┋┊⤶ ⬎ | ↩  │ ║
+    set listchars=""
+    set listchars=tab:›\ " Add a space
+    set listchars+=trail:•
+    set listchars+=extends:»
+    set listchars+=precedes:«
+    "set listchars+=eol:¬
+    set listchars+=nbsp:.
+
+    set fillchars=""
+    set fillchars+=vert:║
+    set fillchars+=fold:‧
+
     " Minimum lines to keep above and below cursor
     " 999 causes the cursor to remain centered
     set scrolloff=999
 
-    " Hilight cursor column
+    " Highlight cursor column
     "set cursorcolumn
 
-    " Highlight cursor
-    "hi link Cursor airline_a
+    " Highlight textwidth column
+    "set colorcolumn=+0,+1,+2,+3,+4,+5,+6,+7,+8,+9,+10
+    execute "set colorcolumn=+" . join(range(0,255), ',+')
 
     " Line numbering
     set nonu
@@ -77,6 +92,22 @@ endif
 " }}
 
 " Filetype actions and detection {{
+    
+    let perl_include_pod = 1
+    "unlet perl_no_scope_in_variables
+    "unlet perl_no_extended_vars
+    "unlet perl_string_as_statement
+    "unlet perl_no_sync_on_sub
+    "unlet perl_no_sync_on_global_var
+    "let perl_sync_dist = 100
+    let perl_fold = 1
+    "unlet perl_fold
+    let perl_fold_blocks = 1
+    "unlet perl_fold_blocks
+    let perl_nofold_packages = 1
+    "let perl_nofold_subs = 1
+    "let perl_fold_anonymous_subs = 1
+
     au BufRead,BufNewFile *.vlib,*.vams,*.v,*.vh,*.sv,*.svi,*.svp,*.svh		set filetype=verilog_systemverilog
     au BufRead,BufNewFile *.il		set filetype=skill
     au BufRead,BufNewFile *.hvp		set filetype=hvp
@@ -84,6 +115,8 @@ endif
     au BufRead,BufNewFile *.lib		set filetype=liberty
     au BufRead,BufNewFile *.gradle	set filetype=groovy
     au BufRead,BufNewFile *.spef	set filetype=spef
+
+    au BufRead,BufNewFile *.pl,*.pm	setlocal tw=120
 
     autocmd FileType verilog_systemverilog autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     autocmd FileType perl autocmd BufWritePre <buffer> call StripTrailingWhitespace()
@@ -318,9 +351,39 @@ endif
     let g:airline_detect_modified=1
     let g:airline_detect_paste=1
 
-    " symbols        › ‹
-    let g:airline_left_sep=''
-    let g:airline_right_sep=''
+    if !exists('g:airline_symbols')
+        let g:airline_symbols = {}
+    endif
+
+    "" unicode symbols
+    "let g:airline_left_sep = '»'
+    "let g:airline_left_sep = '▶'
+    "let g:airline_right_sep = '«'
+    "let g:airline_right_sep = '◀'
+    "let g:airline_symbols.crypt = '🔒'
+    "let g:airline_symbols.linenr = '␊'
+    "let g:airline_symbols.linenr = '␤'
+    "let g:airline_symbols.linenr = '¶'
+    "let g:airline_symbols.maxlinenr = '☰'
+    "let g:airline_symbols.maxlinenr = ''
+    "let g:airline_symbols.branch = '⎇'
+    "let g:airline_symbols.paste = 'ρ'
+    "let g:airline_symbols.paste = 'Þ'
+    "let g:airline_symbols.paste = '∥'
+    "let g:airline_symbols.spell = 'Ꞩ'
+    "let g:airline_symbols.notexists = '∄'
+    "let g:airline_symbols.whitespace = 'Ξ'
+
+    " powerline symbols
+    " symbols        › ǽ ‹ Ƨ ₴ ₩
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+    let g:airline_symbols.branch = ''
+    let g:airline_symbols.readonly = ''
+    let g:airline_symbols.linenr = ''
+    let g:airline_symbols.spell = 'Ƨ'
 
     ""enable/disable fugitive/lawrencium integration >
     let g:airline#extensions#branch#enabled = 1
@@ -609,14 +672,30 @@ endif
             let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
         endif
 
-        let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
+        if strlen(line) > 50
+            "let line = line[0:stridx(line, ' ', 50)]
+            let line = line[0:50]
+        endif
+
+        if winwidth(0) < &textwidth
+            let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
+        else
+            let w = &textwidth - &foldcolumn - (&number ? 8 : 0)
+        endif
+
+        " ≖ ∞ ⁙ ⎯ … ┄ ┅ ┈ ┉ ▷ ◂ ‣⁌⁂ ↨ ⁅ ⁖‡ 
         let foldSize = 1 + v:foldend - v:foldstart
         let foldSizeStr = " " . foldSize . " lines "
-        let foldLevelStr = repeat("+--", v:foldlevel)
+        let foldLevelStr = "↨ " . v:foldlevel
+        let foldIndStr = "‣ "
+
         let lineCount = line("$")
-        let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%] "
-        let expansionString = repeat(".", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
-        return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
+        let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%]"
+        let expansionString = repeat("┄", w - strwidth(foldIndStr.foldSizeStr.line.foldPercentage.foldLevelStr) - 1)
+
+        let foldStr = foldIndStr . line . ' ' . expansionString . foldSizeStr . foldPercentage . foldLevelStr
+
+        return foldStr
     endf
     set foldtext=CustomFoldText()
 " }}
@@ -630,12 +709,15 @@ endif
         "hi clear PmenuSbar
         "hi clear PmenuThumb
 
-        hi FoldColumn  gui=NONE guifg=#839496 guibg=#073642 guisp=#002b36                           ctermfg=6 ctermbg=0
-        hi Folded      gui=NONE guifg=#839496 guibg=#013E4D guisp=#002b36 term=underline cterm=bold ctermfg=6 ctermbg=0
+        "hi FoldColumn  gui=NONE guifg=#839496 guibg=#333333 guisp=#002b36                           ctermfg=6 ctermbg=0
+        hi FoldColumn  gui=NONE guifg=#536466 guibg=#002632 guisp=#002b36                           ctermfg=6 ctermbg=0
+        "hi Folded      gui=NONE guifg=#839496 guibg=#013E4D guisp=#002b36 term=underline cterm=bold ctermfg=6 ctermbg=0
+        hi Folded      gui=NONE guifg=#536466 guibg=#002632 guisp=#002b36 term=underline cterm=bold ctermfg=6 ctermbg=0
         hi Pmenu       gui=NONE guifg=#AAAAAA guibg=#333333                                         ctermfg=lightgray ctermbg=gray
         hi PmenuSel    gui=NONE guifg=#FFFFFF guibg=#002B36                                         ctermfg=white     ctermbg=black
         "hi PmenuSbar  gui=NONE guifg=grey    guibg=#F8F8F8                                         ctermfg=darkcyan  ctermbg=lightgray cterm=NONE
         "hi PmenuThumb gui=NONE guifg=#F8F8F8 guibg=#8A95A7                                         ctermfg=lightgray ctermbg=darkcyan  cterm=NONE
+        hi ColorColumn gui=NONE               guibg=#002632
 
         "TODO check if ctrlspace installed
         if isdirectory(expand("~/.vim/bundle/vim-ctrlspace/"))
