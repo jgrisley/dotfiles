@@ -1,5 +1,5 @@
 if_os () { [[ $OSTYPE == *$1* ]]; }
-if_nix () { 
+if_nix () {
     case "$OSTYPE" in
         *linux*|*hurd*|*msys*|*cygwin*|*sua*|*interix*) sys="gnu";;
         *bsd*|*darwin*) sys="bsd";;
@@ -18,7 +18,7 @@ set_bsd_ls_colors () {
     # CLICOLOR.  This string is a concatenation of pairs of the
     # format fb, where f is the foreground color and b is the
     # background color.
-    # 
+    #
     # The color designators are as follows:
     #     a   black      | A   bold black, usually shows up as dark grey
     #     b   red        | B   bold red
@@ -64,17 +64,22 @@ set_bsd_ls_colors () {
 }
 
 set_gnu_ls_colors () {
-    alias ls='ls --color=auto' 
+    alias ls='ls --color=auto'
     # To have colors for ls and all grep commands such as grep, egrep and zgrep
     #export LS_COLORS='no=00:fi=00:di=00;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.xml=00;31:'
 }
 
-export GREP_OPTIONS='--color=auto'
-export GREP_COLOR='1;32'
-export CLICOLOR=1
+#export GREP_OPTIONS='--color=auto'
+#export GREP_COLOR='1;32'
+#export CLICOLOR=1
+
+GREP_OPTIONS='--color=auto'
+GREP_COLOR='1;32'
+CLICOLOR=1
 
 if_nix gnu    && set_gnu_ls_colors
-if_nix bsd    && set_bsd_ls_colors && export CLICOLORS=$CLICOLORS && export LSCOLORS=$LSCOLORS
+#if_nix bsd    && set_bsd_ls_colors && export CLICOLORS=$CLICOLORS && export LSCOLORS=$LSCOLORS
+if_nix bsd    && set_bsd_ls_colors && CLICOLORS=$CLICOLORS && LSCOLORS=$LSCOLORS
 
 #if_os  linux  && alias psg="ps -FA | grep" #alternative to pgrep
 #if_nix bsd    && alias psg="ps -alwx | grep -i" #alternative to pgrep
@@ -82,15 +87,139 @@ if_nix bsd    && set_bsd_ls_colors && export CLICOLORS=$CLICOLORS && export LSCO
 
 # Setup history for unlimited size
 # and eternal history
-export HISTCONTROL=erasedups
-export HISTFILESIZE=
-export HISTSIZE=
-export HISTTIMEFORMAT="[%h%d %a %r] "
-export HISTFILE=~/.bash_eternal_history
+#export HISTCONTROL=erasedups
+#export HISTFILESIZE=
+#export HISTSIZE=
+#export HISTTIMEFORMAT="[%h%d %a %r] "
+#export HISTFILE=~/.bash_eternal_history
 
-#export PS1="[\u@\[\e[34;1m\]\H \[\e[0m\]\w]$ "
-export PROMPT_COMMAND='export H1="`history 1 | sed -e "s/^[\ 0-9]*//; s/^\[.*\]//; s/[\d0\d31\d34\d39\d96\d127]*//g; s/\(.\{1,50\}\).*$/\1/g"`"; history -a; echo -e "sgr0\ncnorm\nrmso" | tput -S'
-export PS1='\n\e[1;90m[\j:\!\e[1;90m]\e[0;36m \T \d \e[1;90m[\e[1;34m\u@\H\e[1;90m:\e[0;37m`tty 2>/dev/null` \e[0;32m+${SHLVL}\e[1;90m] \e[1;37m\w\e[0;37m\[\033]0;[ ${H1}... ] \w - \u@\H +$SHLVL @`tty 2>/dev/null` - [ `uptime` ]\007\]\n\[\]\$ '
+HISTCONTROL=erasedups
+HISTFILESIZE=
+HISTSIZE=
+HISTTIMEFORMAT="[%h%d %a %r] "
+HISTFILE=~/.bash_eternal_history
+
+#tput Colour Capabilities
+#tput setab [1-7] #Set a background colour using ANSI escape
+b_grey="\[$(tput setab 0)\]"
+b_red="\[$(tput setab 1)\]"
+b_green="\[$(tput setab 2)\]"
+b_yellow="\[$(tput setab 3)\]"
+b_blue="\[$(tput setab 4)\]"
+b_magenta="\[$(tput setab 5)\]"
+b_cyan="\[$(tput setab 6)\]"
+b_white="\[$(tput setab 7)\]"
+#tput setb [1-7] #Set a background colour
+#tput setaf [1-7] #Set a foreground colour using ANSI escape
+f_grey="\[$(tput setaf 0)\]"
+f_red="\[$(tput setaf 1)\]"
+f_green="\[$(tput setaf 2)\]"
+f_yellow="\[$(tput setaf 3)\]"
+f_blue="\[$(tput setaf 4)\]"
+f_magenta="\[$(tput setaf 5)\]"
+f_cyan="\[$(tput setaf 6)\]"
+f_white="\[$(tput setaf 7)\]"
+#tput setf [1-7] #Set a foreground colour
+
+#tput Text Mode Capabilities
+#tput bold #Set bold mode
+bold="\[$(tput bold)\]"
+#tput dim #turn on half-bright mode
+#tput smul #begin underline mode
+#tput rmul #exit underline mode
+#tput rev #Turn on reverse mode
+#tput smso #Enter standout mode (bold on rxvt)
+#tput rmso #Exit standout mode
+#tput sgr0 #Turn off all attributes (doesn't work quite as expected)
+reset="\[$(tput sgr0)\]"
+
+promptstatus () {
+    if [ "$?" -ne "0" ]; then
+        echo $(printf "╠%s\n" $?)
+    else
+        echo ''
+    fi
+}
+
+status_fmt () {
+    if [ "$?" -ne "0" ]; then
+        echo "$(tput setaf 1)☠"
+    else
+        echo "$(tput setaf 2)▷"
+    fi
+}
+
+check_width () {
+    _WIDTH=$(tput cols)
+}
+
+# get current branch in git repo
+function parse_git_branch() {
+	BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+	if [ ! "${BRANCH}" == "" ]
+	then
+		STAT=`parse_git_dirty`
+		echo "[${BRANCH}${STAT}]"
+	else
+		echo ""
+	fi
+}
+
+# get current status of git repo
+function parse_git_dirty {
+	status=`git status 2>&1 | tee`
+	dirty=`echo -n "${status}" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?"`
+	untracked=`echo -n "${status}" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?"`
+	ahead=`echo -n "${status}" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?"`
+	newfile=`echo -n "${status}" 2> /dev/null | grep "new file:" &> /dev/null; echo "$?"`
+	renamed=`echo -n "${status}" 2> /dev/null | grep "renamed:" &> /dev/null; echo "$?"`
+	deleted=`echo -n "${status}" 2> /dev/null | grep "deleted:" &> /dev/null; echo "$?"`
+	bits=''
+	if [ "${renamed}" == "0" ]; then
+		bits=">${bits}"
+	fi
+	if [ "${ahead}" == "0" ]; then
+		bits="*${bits}"
+	fi
+	if [ "${newfile}" == "0" ]; then
+		bits="+${bits}"
+	fi
+	if [ "${untracked}" == "0" ]; then
+		bits="?${bits}"
+	fi
+	if [ "${deleted}" == "0" ]; then
+		bits="x${bits}"
+	fi
+	if [ "${dirty}" == "0" ]; then
+		bits="!${bits}"
+	fi
+	if [ ! "${bits}" == "" ]; then
+		echo " ${bits}"
+	else
+		echo ""
+	fi
+}
+#┏┌┓
+#┖└
+# ❭❬❯❮❱❰❳❲ ┗ ┖ ┏ ┎┑┒┍┓┆│┟ ┳ │
+# ▒▒▒▒░░░░▓▓▓▗▚▛▜▞▟▖ ▁▀▅▆▃█▉▍▐▔▕▘▓
+#▒▒▒▒░░░░▓▓▓▓▞▚▚▛▜▞▟▖ ▁▀▅▆▃█▉
+# ╡┃ⴺⴳⵍⵎ ⵓⴻⵁⴱⵅⵛⵖⵒ╛ⴺⴳⵍⵎ
+#\n\[\e[0;32m\]║\[\e[1;30m\]
+#export
+trim_cmd () {
+    export H1="$(history 1 | sed -e "s/^ \+//g; s/^[\ 0-9]*//; s/^\[.*\]//; s/[\d0\d31\d34\d39\d96\d127]*//g; s/\(.\{1,50\}\).*$/\1/g")";
+}
+
+PROMPT_COMMAND='trim_cmd; history -a;'
+#echo -e "sgr0\ncnorm\nrmso" | tput -S'
+
+#\[\e[m\]\[\033]0;[${H1} ...] \w - \u@\H - [ $(uptime) ]\007\]
+#export PS1="\`parse_git_branch\` "
+#export┄
+#PS1='\n\[\e[0;34m\]╔══\[\e[m\e[1;30;51m\][\j:\!:\#]\[\e[m\e[0;32m\]\[\e[m\e[0;36m\]\T \d\[\e[1;30m\][\[\e[1;34m\]\u@\H \[\e[0;32m\]+${SHLVL}\[\e[1;30m]\] \[\e[1;37m\]\w\[\e[1;30m\] ┄ \[\e[m\]\[\033]0;[${H1} ...] \w - \u@\H - [ `uptime` ]\007\]\n\[\e[0;34m\]╚\[\e[${status_color}m\]${status_char}\$\[\e[m\]${BLUE}>>>> '
+PS1="\n${reset}${bold}${f_grey}╔══[${reset}${f_grey}\j:\!:\#${reset}${bold}${f_grey}]${reset}${f_cyan}\T \d${reset}${bold}${f_grey}[${reset}${f_blue}\u@\H ${f_green}+${SHLVL}${bold}${f_grey}]${reset}${bold}${f_white} \w \n${reset}${bold}${f_grey}╚${reset}\$(status_fmt)\$${reset} "
+#╠═[$H1]\n
 
 shopt -s cdspell
 shopt -s no_empty_cmd_completion
