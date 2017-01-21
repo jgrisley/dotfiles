@@ -85,45 +85,50 @@ if_nix bsd && set_bsd_ls_colors && export CLICOLORS=$CLICOLORS && export LSCOLOR
 
 # Setup history for unlimited size
 # and eternal history
-HISTCONTROL=erasedups
-HISTFILESIZE=
-HISTSIZE=
-HISTTIMEFORMAT="[%h%d %a %r] "
-HISTFILE=~/.bash_eternal_history
+export HISTCONTROL=erasedups
+export HISTFILESIZE=
+export HISTSIZE=
+export HISTTIMEFORMAT="[%h%d %a %r] "
+export HISTFILE=~/.bash_eternal_history
 
-#tput Colour Capabilities
-#tput setab [1-7] #Set a background colour using ANSI escape
-b_grey="\[$(tput setab 0)\]"
-b_red="\[$(tput setab 1)\]"
-b_green="\[$(tput setab 2)\]"
-b_yellow="\[$(tput setab 3)\]"
-b_blue="\[$(tput setab 4)\]"
-b_magenta="\[$(tput setab 5)\]"
-b_cyan="\[$(tput setab 6)\]"
-b_white="\[$(tput setab 7)\]"
-#tput setb [1-7] #Set a background colour
-#tput setaf [1-7] #Set a foreground colour using ANSI escape
-f_grey="\[$(tput setaf 0)\]"
-f_red="\[$(tput setaf 1)\]"
-f_green="\[$(tput setaf 2)\]"
-f_yellow="\[$(tput setaf 3)\]"
-f_blue="\[$(tput setaf 4)\]"
-f_magenta="\[$(tput setaf 5)\]"
-f_cyan="\[$(tput setaf 6)\]"
-f_white="\[$(tput setaf 7)\]"
-#tput setf [1-7] #Set a foreground colour
+if [[ $- == *i* ]]; then
+    # Common prompt_command
+    #tput Color Capabilities
 
-#tput Text Mode Capabilities
-#tput bold #Set bold mode
-bold="\[$(tput bold)\]"
-#tput dim #turn on half-bright mode
-#tput smul #begin underline mode
-#tput rmul #exit underline mode
-#tput rev #Turn on reverse mode
-#tput smso #Enter standout mode (bold on rxvt)
-#tput rmso #Exit standout mode
-#tput sgr0 #Turn off all attributes (doesn't work quite as expected)
-reset="\[$(tput sgr0)\]"
+    #tput setf [1-7] #Set a foreground colour
+    #tput setaf [1-7] #Set a foreground colour using ANSI escape
+    #b_grey="\[$(tput setab 0)\]"
+    b_grey="\[\e[48;5;235m\]"      ; b_red="\[$(tput setab 1)\]"    ; b_green="\[$(tput setab 2)\]"
+    b_yellow="\[$(tput setab 3)\]" ; b_blue="\[$(tput setab 4)\]"   ; b_magenta="\[$(tput setab 5)\]"
+    b_cyan="\[$(tput setab 6)\]"   ; b_white="\[$(tput setab 7)\]"  ; b_default="\[$(tput setab 9)\]"
+
+    #tput setb [1-7] #Set a background colour
+    #tput setab [1-7] #Set a background colour using ANSI escape
+    f_grey="\[$(tput setaf 0)\]"   ; f_red="\[$(tput setaf 1)\]"   ; f_green="\[$(tput setaf 2)\]"
+    f_yellow="\[$(tput setaf 3)\]" ; f_blue="\[$(tput setaf 4)\]"  ; f_magenta="\[$(tput setaf 5)\]"
+    f_cyan="\[$(tput setaf 6)\]"   ; f_white="\[$(tput setaf 7)\]" ; f_default="\[$(tput setaf 9)\]"
+
+    #tput Text Mode Capabilities
+    #tput bold #Set bold mode
+    bold="\[$(tput bold)\]"
+    #tput dim #turn on half-bright mode
+    #tput smul #begin underline mode
+    #tput rmul #exit underline mode
+    #tput rev #Turn on reverse mode
+    rev="\[$(tput rev)\]"
+    #tput smso #Enter standout mode (bold on rxvt)
+    #tput rmso #Exit standout mode
+
+    e_grey="\[$(tput bold)$(tput setaf 0)\]"    ; e_red="\[$(tput bold)$(tput setaf 1)\]"
+    e_green="\[$(tput bold)$(tput setaf 2)\]"   ; e_yellow="\[$(tput bold)$(tput setaf 3)\]"
+    e_blue="\[$(tput bold)$(tput setaf 4)\]"    ; e_magenta="\[$(tput bold)$(tput setaf 5)\]"
+    e_cyan="\[$(tput bold)$(tput setaf 6)\]"    ; e_white="\[$(tput bold)$(tput setaf 7)\]"
+    e_default="\[$(tput bold)$(tput setaf 9)\]"
+
+    #tput sgr0 #Turn off all attributes (doesn't work quite as expected)
+    reset="\[$(tput sgr0)\]"
+fi
+
 
 promptstatus () {
     if [ "$?" -ne "0" ]; then
