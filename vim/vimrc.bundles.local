@@ -18,7 +18,8 @@
 " visual-increment {
     Plugin 'visual-increment'
 "}
-
+"
+    Plugin 'hiberabyss/vim-gradle'
 " temporary plugins under evaluation {
     "Plugin 'xolox/vim-misc'
     "Plugin 'xolox/vim-easytags'
