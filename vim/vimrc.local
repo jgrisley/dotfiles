@@ -552,8 +552,9 @@ endif
         let g:syntastic_verilog_systemverilog_checkers=['']
     "endif
     endif
-    let g:syntastic_disabled_filetypes=['fortran']
-    let g:syntastic_disabled_filetypes=['gofortran']
+    let g:syntastic_disabled_filetypes=['fortran', 'gofortran', 'html']
+
+    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go', 'gofortran', 'fortran', 'html', 'javascript' ] }
 " }}
 
 " Rainbow Parens {{
