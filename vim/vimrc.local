@@ -113,7 +113,6 @@ endif
     au BufRead,BufNewFile *.hvp		set filetype=hvp
     au BufRead,BufNewFile *.cpf		set filetype=cpf
     au BufRead,BufNewFile *.lib		set filetype=liberty
-    au BufRead,BufNewFile *.gradle	set filetype=groovy
     au BufRead,BufNewFile *.spef	set filetype=spef
 
     au BufRead,BufNewFile *.pl,*.pm	setlocal tw=120
